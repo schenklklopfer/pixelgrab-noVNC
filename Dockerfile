@@ -1,4 +1,4 @@
-FROM ubuntu:focal
+FROM ubuntu:22.04
 
 ENV HOME /root
 ENV DEBIAN_FRONTEND noninteractive
@@ -13,16 +13,17 @@ RUN apt-get update
 #BUILD pixelgrab
 RUN apt-get -y install libgl1-mesa-dev xorg-dev golang git
 RUN git clone https://github.com/schenklklopfer/pixelgrab /root/pixelgrab
+#ADD ./pixelgrab /root/pixelgrab
 RUN cd /root/pixelgrab/ && go build
 
-RUN apt-get -y install xvfb x11vnc xdotool wget tar supervisor net-tools gnupg2 python fluxbox xz-utils
+RUN apt-get -y install xvfb x11vnc xdotool wget tar supervisor net-tools gnupg2 xz-utils
 RUN apt-get -y full-upgrade && apt-get clean
 
 WORKDIR /root/
-RUN wget -O - https://github.com/novnc/noVNC/archive/v1.2.0.tar.gz | tar -xzv -C /root/ && mv /root/noVNC-1.2.0 /root/novnc && ln -s /root/novnc/vnc_lite.html /root/novnc/index.html
-RUN wget -O - https://github.com/novnc/websockify/archive/v0.9.0.tar.gz | tar -xzv -C /root/ && mv /root/websockify-0.9.0 /root/novnc/utils/websockify
+RUN wget -O - https://github.com/novnc/noVNC/archive/refs/tags/v1.4.0.tar.gz | tar -xzv -C /root/ && mv /root/noVNC-1.4.0 /root/novnc && ln -s /root/novnc/vnc_lite.html /root/novnc/index.html
+RUN wget -O - https://github.com/novnc/websockify/archive/refs/tags/v0.11.0.tar.gz | tar -xzv -C /root/ && mv /root/websockify-0.11.0 /root/novnc/utils/websockify
 
-ADD ffmpeg /root/ffmpeg
+#ADD ffmpeg /root/ffmpeg
 
 ADD supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 ENV DISPLAY :0
